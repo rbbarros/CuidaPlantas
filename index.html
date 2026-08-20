@@ -1,146 +1,160 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meu Guia de Plantinhas</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap');
-        
-        body { 
-            font-family: 'Outfit', sans-serif; 
-            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); 
-            min-height: 100vh;
-            padding: 40px 20px; 
-            color: #1e3322; 
-            margin: 0; 
-        }
-        .container { max-width: 1100px; margin: 0 auto; }
-        .cabecalho { text-align: center; margin-bottom: 40px; }
-        h2 { font-size: 2.5rem; margin-bottom: 10px; color: #1b4332; letter-spacing: -1px; }
-        .subtitulo { color: #405c48; font-size: 1.1rem; font-weight: 300; }
-        
-        .busca-container { position: relative; max-width: 600px; margin: 0 auto 40px auto; }
-        .busca { 
-            width: 100%; padding: 18px 24px; font-size: 1.1rem; 
-            border: none; border-radius: 50px; 
-            box-shadow: 0 10px 25px rgba(27, 67, 50, 0.1); 
-            box-sizing: border-box; background: white; 
-            transition: all 0.3s ease;
-            font-family: 'Outfit', sans-serif;
-            color: #1b4332;
-        }
-        .busca:focus { outline: none; box-shadow: 0 15px 35px rgba(27, 67, 50, 0.2); transform: translateY(-2px); }
-        .busca::placeholder { color: #a3b1a8; }
-        
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
-        
-        .card { 
-            background: rgba(255, 255, 255, 0.9); 
-            backdrop-filter: blur(10px);
-            border-radius: 20px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
-            display: flex; flex-direction: column; 
-            overflow: hidden; 
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 1px solid rgba(255,255,255,0.5);
-        }
-        .card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(27, 67, 50, 0.15); }
-        .card img { width: 100%; height: 220px; object-fit: cover; transition: transform 0.5s ease; }
-        .card:hover img { transform: scale(1.05); }
-        
-        .card-conteudo { padding: 25px; display: flex; flex-direction: column; flex-grow: 1; }
-        .nome-cientifico { font-size: 12px; color: #74a18e; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; margin-bottom: 5px; }
-        .nome-comum { margin: 0 0 15px 0; color: #1b4332; font-size: 1.6rem; }
-        
-        .info-dica { 
-            background: #f1f8f4; 
-            border-radius: 12px; 
-            padding: 15px; 
-            margin-top: auto;
-            border-left: 4px solid #52b788;
-        }
-        .dica-item { display: flex; align-items: flex-start; margin-bottom: 10px; font-size: 0.95rem; line-height: 1.4; color: #2d6a4f; }
-        .dica-item:last-child { margin-bottom: 0; }
-        .dica-icone { margin-right: 10px; font-size: 1.1rem; }
-    </style>
-</head>
-<body>
-
-    <div class="container">
-        <div class="cabecalho">
-            <h2>🌿 Meu Guia de Plantinhas</h2>
-            <div class="subtitulo">Descubra as plantas mais amadas para ter em casa e como cuidar delas</div>
-        </div>
-        
-        <div class="busca-container">
-            <input type="text" id="busca" class="busca" placeholder="Pesquisar por samambaia, jiboia...">
-        </div>
-        
-        <div id="lista" class="grid"></div>
-    </div>
-
-    <script>
-        let plantasBrasileiras = [];
-
-        async function buscarPlantasDaAPI() {
-            const container = document.getElementById('lista');
-            container.innerHTML = "<p style='grid-column: 1/-1; text-align: center; font-size: 1.2rem; color: #405c48; margin-top: 40px;'>🔄 Carregando dados da API externa...</p>";
-            
-            try {
-                // Consumindo a API externa (usando o serviço My-JSON-Server que lê o seu próprio db.json no GitHub)
-                const resposta = await fetch('https://my-json-server.typicode.com/rbbarros/CuidaPlantas/plantas');
-                if (!resposta.ok) {
-                    throw new Error('Erro na requisição da API');
-                }
-                
-                plantasBrasileiras = await resposta.json();
-                mostrarPlantas(plantasBrasileiras);
-            } catch (erro) {
-                console.error(erro);
-                container.innerHTML = "<p style='grid-column: 1/-1; text-align: center; color: #d62828; margin-top: 40px;'>⚠️ Erro ao conectar com a API externa. Verifique sua conexão ou tente mais tarde.</p>";
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Cuida Plantas</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background: #f0f7f4;
+                padding: 20px;
+                color: #1e3322;
             }
-        }
 
-        function mostrarPlantas(lista) {
-            const container = document.getElementById('lista');
-            if (lista.length === 0) {
-                container.innerHTML = "<p style='grid-column: 1/-1; text-align: center; font-size: 1.2rem; color: #405c48; margin-top: 40px;'>Nenhuma plantinha encontrada com esse nome. 😢</p>";
-                return;
+            h1 { color: #1b4332; }
+
+            input {
+                width: 100%;
+                max-width: 400px;
+                padding: 10px;
+                font-size: 16px;
+                border: 1px solid #ccc;
+                border-radius: 8px;
+                margin-bottom: 20px;
+                box-sizing: border-box;
             }
-            container.innerHTML = lista.map(p => `
-                <div class="card">
-                    <img src="${p.foto}" alt="${p.name}">
-                    <div class="card-conteudo">
-                        <div class="nome-cientifico">${p.slug}</div>
-                        <h3 class="nome-comum">${p.name}</h3>
+
+            .grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 20px;
+            }
+
+            .card {
+                background: white;
+                border-radius: 10px;
+                padding: 16px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+                border-top: 4px solid #52b788;
+            }
+
+            .card img {
+                width: 100%;
+                height: 180px;
+                object-fit: cover;
+                border-radius: 6px;
+            }
+
+            .card h3 { margin: 10px 0 4px 0; color: #1b4332; }
+            .card .cientifico { font-size: 12px; color: #74a18e; margin-bottom: 10px; }
+            .card p { font-size: 14px; line-height: 1.5; margin: 4px 0; }
+        </style>
+    </head>
+    <body>
+        <h1>🌿 Cuida Plantas</h1>
+        <p>Saiba como cuidar das plantas mais populares em casa!</p>
+
+        <input type="text" id="busca" placeholder="🔍 Buscar planta...">
+
+        <div class="grid" id="lista">
+            Carregando dados da API...
+        </div>
+
+        <script>
+            // Dicas de cuidado por planta (nome científico como chave)
+            const cuidados = {
+                "Epipremnum aureum":     { rega: "1-2x por semana", luz: "Meia-sombra" },
+                "Nephrolepis exaltata":  { rega: "2-3x por semana", luz: "Luz indireta" },
+                "Sansevieria trifasciata": { rega: "A cada 15 dias", luz: "Sol pleno ou sombra" },
+                "Monstera deliciosa":    { rega: "1-2x por semana", luz: "Luz difusa" },
+                "Zamioculcas zamiifolia": { rega: "A cada 15 dias", luz: "Pouca luz" },
+                "Spathiphyllum wallisii": { rega: "3-4x por semana", luz: "Meia-sombra" },
+                "Echeveria":             { rega: "1x por semana", luz: "Sol pleno" },
+            };
+
+            // Artigos da Wikipedia para cada planta
+            const plantas = [
+                "Epipremnum_aureum",
+                "Nephrolepis_exaltata",
+                "Sansevieria_trifasciata",
+                "Monstera_deliciosa",
+                "Zamioculcas_zamiifolia",
+                "Spathiphyllum_wallisii",
+                "Echeveria",
+            ];
+
+            let todasPlantas = [];
+
+            // Usando o proxy allorigins para evitar bloqueio de CORS
+            async function carregarPlantas() {
+                try {
+                    const promessas = plantas.map(nome => {
+                        const url = `https://pt.wikipedia.org/api/rest_v1/page/summary/${nome}`;
+                        const API = "https://api.allorigins.win/raw?url=" + encodeURIComponent(url);
+                        return fetch(API).then(res => res.json());
+                    });
+
+                    const resultados = await Promise.all(promessas);
+
+                    todasPlantas = resultados.map(dado => {
+                        const dica = cuidados[dado.description?.split(" ")[0] + " " + dado.description?.split(" ")[1]] 
+                                  || Object.entries(cuidados).find(([k]) => dado.titles?.normalized?.includes(k.split(" ")[0]))?.[1]
+                                  || { rega: "Consultar especialista", luz: "Consultar especialista" };
                         
-                        <div class="info-dica">
-                            <div class="dica-item">
-                                <span class="dica-icone">💧</span>
-                                <div><strong>Rega:</strong> ${p.rega}</div>
-                            </div>
-                            <div class="dica-item">
-                                <span class="dica-icone">☀️</span>
-                                <div><strong>Luz:</strong> ${p.luz}</div>
-                            </div>
+                        // Tenta encontrar as dicas pelo título científico
+                        const dicaFinal = Object.entries(cuidados).find(([k]) => 
+                            dado.titles?.normalized?.replace("_", " ")?.toLowerCase().includes(k.toLowerCase())
+                        )?.[1] || { rega: "Moderada", luz: "Luz indireta" };
+
+                        return {
+                            nome: dado.title,
+                            descricao: dado.description || "Planta ornamental",
+                            foto: dado.thumbnail?.source || "",
+                            resumo: dado.extract?.substring(0, 120) + "..." || "",
+                            rega: dicaFinal.rega,
+                            luz: dicaFinal.luz,
+                        };
+                    });
+
+                    mostrarPlantas(todasPlantas);
+                } catch (erro) {
+                    console.error("Erro:", erro);
+                    document.querySelector("#lista").innerText = "Erro ao carregar dados da API.";
+                }
+            }
+
+            function mostrarPlantas(lista) {
+                const grid = document.querySelector("#lista");
+                if (lista.length === 0) {
+                    grid.innerText = "Nenhuma planta encontrada.";
+                    return;
+                }
+
+                grid.innerHTML = "";
+                lista.forEach(p => {
+                    grid.innerHTML += `
+                        <div class="card">
+                            ${p.foto ? `<img src="${p.foto}" alt="${p.nome}">` : ""}
+                            <h3>${p.nome}</h3>
+                            <p class="cientifico">${p.descricao}</p>
+                            <p>💧 <strong>Rega:</strong> ${p.rega}</p>
+                            <p>☀️ <strong>Luz:</strong> ${p.luz}</p>
+                            <p>📖 ${p.resumo}</p>
                         </div>
-                    </div>
-                </div>
-            `).join('');
-        }
+                    `;
+                });
+            }
 
-        document.getElementById('busca').addEventListener('input', (e) => {
-            const termo = e.target.value.toLowerCase();
-            const filtradas = plantasBrasileiras.filter(p => 
-                p.name.toLowerCase().includes(termo) || p.slug.toLowerCase().includes(termo)
-            );
-            mostrarPlantas(filtradas);
-        });
+            document.querySelector("#busca").addEventListener("input", (e) => {
+                const termo = e.target.value.toLowerCase();
+                const filtradas = todasPlantas.filter(p =>
+                    p.nome.toLowerCase().includes(termo) || p.descricao.toLowerCase().includes(termo)
+                );
+                mostrarPlantas(filtradas);
+            });
 
-        // Iniciar buscando os dados da API
-        buscarPlantasDaAPI();
-    </script>
-</body>
+            carregarPlantas();
+        </script>
+    </body>
 </html>
-
