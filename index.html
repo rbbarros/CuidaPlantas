@@ -1,160 +1,55 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Cuida Plantas</title>
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                background: #f0f7f4;
-                padding: 20px;
-                color: #1e3322;
-            }
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Guia de Plantinhas</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background: #e8f5e9; margin: 0; }
+        .grid { display: flex; flex-wrap: wrap; gap: 20px; }
+        .card { background: white; border-radius: 12px; width: 280px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); cursor: pointer; }
+        .card img { width: 100%; height: 180px; object-fit: cover; }
+        .content { padding: 15px; }
+        .card h3 { margin: 0 0 10px 0; color: #1b4332; }
+        .info { background: #f1f8e9; padding: 10px; border-radius: 6px; font-size: 0.85rem; color: #2d6a4f; max-height: 75px; overflow: hidden; transition: max-height 0.3s ease; }
+        .card.ativo .info { max-height: 1000px; }
+        .info p { margin: 5px 0 0 0; }
+    </style>
+</head>
+<body>
+    <h1>🌿 Meu Guia de Plantinhas</h1>
+    <p>Clique no card para ler o texto completo!</p>
+    <div class="grid" id="plantas">Carregando...</div>
 
-            h1 { color: #1b4332; }
+    <script>
+        const plantas = [
+            { id: "Epipremnum_aureum", nome: "Epipremnum aureum" },
+            { id: "Samambaia", nome: "Samambaia" },
+            { id: "Dracaena_trifasciata", nome: "Dracaena trifasciata" },
+            { id: "Monstera_deliciosa", nome: "Monstera deliciosa" },
+            { id: "Zamioculcas", nome: "Zamioculcas" },
+            { id: "Spathiphyllum_wallisii", nome: "Spathiphyllum" }
+        ];
 
-            input {
-                width: 100%;
-                max-width: 400px;
-                padding: 10px;
-                font-size: 16px;
-                border: 1px solid #ccc;
-                border-radius: 8px;
-                margin-bottom: 20px;
-                box-sizing: border-box;
-            }
-
-            .grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-                gap: 20px;
-            }
-
-            .card {
-                background: white;
-                border-radius: 10px;
-                padding: 16px;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-                border-top: 4px solid #52b788;
-            }
-
-            .card img {
-                width: 100%;
-                height: 180px;
-                object-fit: cover;
-                border-radius: 6px;
-            }
-
-            .card h3 { margin: 10px 0 4px 0; color: #1b4332; }
-            .card .cientifico { font-size: 12px; color: #74a18e; margin-bottom: 10px; }
-            .card p { font-size: 14px; line-height: 1.5; margin: 4px 0; }
-        </style>
-    </head>
-    <body>
-        <h1>🌿 Cuida Plantas</h1>
-        <p>Saiba como cuidar das plantas mais populares em casa!</p>
-
-        <input type="text" id="busca" placeholder="🔍 Buscar planta...">
-
-        <div class="grid" id="lista">
-            Carregando dados da API...
-        </div>
-
-        <script>
-            // Dicas de cuidado por planta (nome científico como chave)
-            const cuidados = {
-                "Epipremnum aureum":     { rega: "1-2x por semana", luz: "Meia-sombra" },
-                "Nephrolepis exaltata":  { rega: "2-3x por semana", luz: "Luz indireta" },
-                "Sansevieria trifasciata": { rega: "A cada 15 dias", luz: "Sol pleno ou sombra" },
-                "Monstera deliciosa":    { rega: "1-2x por semana", luz: "Luz difusa" },
-                "Zamioculcas zamiifolia": { rega: "A cada 15 dias", luz: "Pouca luz" },
-                "Spathiphyllum wallisii": { rega: "3-4x por semana", luz: "Meia-sombra" },
-                "Echeveria":             { rega: "1x por semana", luz: "Sol pleno" },
-            };
-
-            // Artigos da Wikipedia para cada planta
-            const plantas = [
-                "Epipremnum_aureum",
-                "Nephrolepis_exaltata",
-                "Sansevieria_trifasciata",
-                "Monstera_deliciosa",
-                "Zamioculcas_zamiifolia",
-                "Spathiphyllum_wallisii",
-                "Echeveria",
-            ];
-
-            let todasPlantas = [];
-
-            // Usando o proxy allorigins para evitar bloqueio de CORS
-            async function carregarPlantas() {
+        async function carregar() {
+            const grid = document.getElementById("plantas");
+            grid.innerHTML = "";
+            for (const p of plantas) {
                 try {
-                    const promessas = plantas.map(nome => {
-                        const url = `https://pt.wikipedia.org/api/rest_v1/page/summary/${nome}`;
-                        const API = "https://api.allorigins.win/raw?url=" + encodeURIComponent(url);
-                        return fetch(API).then(res => res.json());
-                    });
-
-                    const resultados = await Promise.all(promessas);
-
-                    todasPlantas = resultados.map(dado => {
-                        const dica = cuidados[dado.description?.split(" ")[0] + " " + dado.description?.split(" ")[1]] 
-                                  || Object.entries(cuidados).find(([k]) => dado.titles?.normalized?.includes(k.split(" ")[0]))?.[1]
-                                  || { rega: "Consultar especialista", luz: "Consultar especialista" };
-                        
-                        // Tenta encontrar as dicas pelo título científico
-                        const dicaFinal = Object.entries(cuidados).find(([k]) => 
-                            dado.titles?.normalized?.replace("_", " ")?.toLowerCase().includes(k.toLowerCase())
-                        )?.[1] || { rega: "Moderada", luz: "Luz indireta" };
-
-                        return {
-                            nome: dado.title,
-                            descricao: dado.description || "Planta ornamental",
-                            foto: dado.thumbnail?.source || "",
-                            resumo: dado.extract?.substring(0, 120) + "..." || "",
-                            rega: dicaFinal.rega,
-                            luz: dicaFinal.luz,
-                        };
-                    });
-
-                    mostrarPlantas(todasPlantas);
-                } catch (erro) {
-                    console.error("Erro:", erro);
-                    document.querySelector("#lista").innerText = "Erro ao carregar dados da API.";
-                }
-            }
-
-            function mostrarPlantas(lista) {
-                const grid = document.querySelector("#lista");
-                if (lista.length === 0) {
-                    grid.innerText = "Nenhuma planta encontrada.";
-                    return;
-                }
-
-                grid.innerHTML = "";
-                lista.forEach(p => {
+                    const res = await fetch(`https://pt.wikipedia.org/api/rest_v1/page/summary/${p.id}`);
+                    const d = await res.json();
                     grid.innerHTML += `
-                        <div class="card">
-                            ${p.foto ? `<img src="${p.foto}" alt="${p.nome}">` : ""}
-                            <h3>${p.nome}</h3>
-                            <p class="cientifico">${p.descricao}</p>
-                            <p>💧 <strong>Rega:</strong> ${p.rega}</p>
-                            <p>☀️ <strong>Luz:</strong> ${p.luz}</p>
-                            <p>📖 ${p.resumo}</p>
-                        </div>
-                    `;
-                });
+                        <div class="card" onclick="this.classList.toggle('ativo')">
+                            <img src="${d.thumbnail ? d.thumbnail.source : ''}" alt="${p.nome}">
+                            <div class="content">
+                                <h3>${p.nome}</h3>
+                                <div class="info"><strong>📖 Info API:</strong><p>${d.extract || ''}</p></div>
+                            </div>
+                        </div>`;
+                } catch (e) { console.error(e); }
             }
-
-            document.querySelector("#busca").addEventListener("input", (e) => {
-                const termo = e.target.value.toLowerCase();
-                const filtradas = todasPlantas.filter(p =>
-                    p.nome.toLowerCase().includes(termo) || p.descricao.toLowerCase().includes(termo)
-                );
-                mostrarPlantas(filtradas);
-            });
-
-            carregarPlantas();
-        </script>
-    </body>
+        }
+        carregar();
+    </script>
+</body>
 </html>
