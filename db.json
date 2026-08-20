@@ -1,0 +1,68 @@
+{
+  "plantas": [
+    {
+      "id": 1,
+      "name": "Jiboia",
+      "slug": "Epipremnum aureum",
+      "foto": "https://images.unsplash.com/photo-1614594975525-e45190c55d0b?auto=format&fit=crop&w=600&q=80",
+      "rega": "1 a 2 vezes por semana. Deixe o solo secar levemente entre as regas.",
+      "luz": "Luz indireta ou meia-sombra. Evite o sol direto."
+    },
+    {
+      "id": 2,
+      "name": "Samambaia Americana",
+      "slug": "Nephrolepis exaltata",
+      "foto": "https://images.unsplash.com/photo-1620127252536-0ba468156100?auto=format&fit=crop&w=600&q=80",
+      "rega": "Mantenha a terra sempre úmida (não encharcada), regando 2 a 3 vezes na semana.",
+      "luz": "Gosta de muita claridade, mas sem sol direto que queima suas folhas."
+    },
+    {
+      "id": 3,
+      "name": "Espada-de-São-Jorge",
+      "slug": "Sansevieria trifasciata",
+      "foto": "https://images.unsplash.com/photo-1596547609652-9fc5d8d428ce?auto=format&fit=crop&w=600&q=80",
+      "rega": "A cada 10 a 15 dias. É muito resistente, não tolera excesso de água.",
+      "luz": "Adapta-se muito bem a sol pleno, meia-sombra ou até pouca luz."
+    },
+    {
+      "id": 4,
+      "name": "Costela-de-Adão",
+      "slug": "Monstera deliciosa",
+      "foto": "https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2?auto=format&fit=crop&w=600&q=80",
+      "rega": "1 a 2 vezes por semana. Gosta de ter suas folhas borrifadas com água.",
+      "luz": "Meia-sombra ou luz difusa brilhante. Cuidado com o sol do meio-dia."
+    },
+    {
+      "id": 5,
+      "name": "Zamioculca",
+      "slug": "Zamioculcas zamiifolia",
+      "foto": "https://images.unsplash.com/photo-1632207691143-643e2a9a9361?auto=format&fit=crop&w=600&q=80",
+      "rega": "1 vez por semana ou a cada 15 dias. Melhor faltar água do que sobrar.",
+      "luz": "A planta guerreira! Sobrevive muito bem em ambientes com pouquíssima luz."
+    },
+    {
+      "id": 6,
+      "name": "Lírio-da-Paz",
+      "slug": "Spathiphyllum wallisii",
+      "foto": "https://images.unsplash.com/photo-1593691509543-c20fb51c0b47?auto=format&fit=crop&w=600&q=80",
+      "rega": "3 a 4 vezes por semana. Se as folhas murcharem, ela está com sede!",
+      "luz": "Meia-sombra. Ideal para interiores com luz moderada."
+    },
+    {
+      "id": 7,
+      "name": "Suculenta Echeveria",
+      "slug": "Echeveria spp.",
+      "foto": "https://images.unsplash.com/photo-1509423350716-97f9360b4e09?auto=format&fit=crop&w=600&q=80",
+      "rega": "Somente quando a terra estiver completamente seca (geralmente 1x na semana).",
+      "luz": "Sol pleno. Ela precisa de luz direta por algumas horas diárias."
+    },
+    {
+      "id": 8,
+      "name": "Ficus Lyrata",
+      "slug": "Ficus lyrata",
+      "foto": "https://images.unsplash.com/photo-1629559381533-3d14ab5d691e?auto=format&fit=crop&w=600&q=80",
+      "rega": "1 vez por semana. Deixe secar bem os primeiros dedos do solo.",
+      "luz": "Gosta de luz filtrada e abundante. Fica feliz próximo a grandes janelas."
+    }
+  ]
+}
