@@ -5,66 +5,166 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meu Guia de Plantinhas</title>
     <style>
-        body { font-family: system-ui, sans-serif; background: #e8f5e9; padding: 20px; color: #1e3322; margin: 0; }
-        .container { max-width: 1000px; margin: 0 auto; }
-        h2 { margin-bottom: 5px; color: #1b4332; }
-        .subtitulo { color: #555; margin-bottom: 20px; font-size: 14px; }
-        .busca { width: 100%; padding: 12px; margin-bottom: 25px; font-size: 16px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; background: white; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
-        .card { background: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); display: flex; flex-direction: column; overflow: hidden; border-top: 4px solid #2d6a4f; }
-        .card img { width: 100%; height: 180px; object-fit: cover; }
-        .card-conteudo { padding: 16px; }
-        .apelido { font-size: 13px; color: #4b6351; font-weight: 500; margin: 4px 0 12px 0; }
-        .descricao { font-size: 14px; line-height: 1.5; margin: 0; }
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap');
+        
+        body { 
+            font-family: 'Outfit', sans-serif; 
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); 
+            min-height: 100vh;
+            padding: 40px 20px; 
+            color: #1e3322; 
+            margin: 0; 
+        }
+        .container { max-width: 1100px; margin: 0 auto; }
+        .cabecalho { text-align: center; margin-bottom: 40px; }
+        h2 { font-size: 2.5rem; margin-bottom: 10px; color: #1b4332; letter-spacing: -1px; }
+        .subtitulo { color: #405c48; font-size: 1.1rem; font-weight: 300; }
+        
+        .busca-container { position: relative; max-width: 600px; margin: 0 auto 40px auto; }
+        .busca { 
+            width: 100%; padding: 18px 24px; font-size: 1.1rem; 
+            border: none; border-radius: 50px; 
+            box-shadow: 0 10px 25px rgba(27, 67, 50, 0.1); 
+            box-sizing: border-box; background: white; 
+            transition: all 0.3s ease;
+            font-family: 'Outfit', sans-serif;
+            color: #1b4332;
+        }
+        .busca:focus { outline: none; box-shadow: 0 15px 35px rgba(27, 67, 50, 0.2); transform: translateY(-2px); }
+        .busca::placeholder { color: #a3b1a8; }
+        
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        
+        .card { 
+            background: rgba(255, 255, 255, 0.9); 
+            backdrop-filter: blur(10px);
+            border-radius: 20px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
+            display: flex; flex-direction: column; 
+            overflow: hidden; 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+        .card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(27, 67, 50, 0.15); }
+        .card img { width: 100%; height: 220px; object-fit: cover; transition: transform 0.5s ease; }
+        .card:hover img { transform: scale(1.05); }
+        
+        .card-conteudo { padding: 25px; display: flex; flex-direction: column; flex-grow: 1; }
+        .nome-cientifico { font-size: 12px; color: #74a18e; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; margin-bottom: 5px; }
+        .nome-comum { margin: 0 0 15px 0; color: #1b4332; font-size: 1.6rem; }
+        
+        .info-dica { 
+            background: #f1f8f4; 
+            border-radius: 12px; 
+            padding: 15px; 
+            margin-top: auto;
+            border-left: 4px solid #52b788;
+        }
+        .dica-item { display: flex; align-items: flex-start; margin-bottom: 10px; font-size: 0.95rem; line-height: 1.4; color: #2d6a4f; }
+        .dica-item:last-child { margin-bottom: 0; }
+        .dica-icone { margin-right: 10px; font-size: 1.1rem; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h2>🌱 Guia de Cuidados das Suas Plantinhas</h2>
-        <div class="subtitulo">Aprenda de um jeito simples e fácil a cuidar, regar e dar amor para as plantinhas da sua casa!</div>
+        <div class="cabecalho">
+            <h2>🌿 Meu Guia de Plantinhas</h2>
+            <div class="subtitulo">Descubra as plantas mais amadas para ter em casa e como cuidar delas</div>
+        </div>
         
-        <input type="text" id="busca" class="busca" placeholder="🔍 Digite o nome da plantinha (Ex: Jiboia)...">
-        <div id="lista" class="grid">Procurando suas plantinhas...</div>
+        <div class="busca-container">
+            <input type="text" id="busca" class="busca" placeholder="Pesquisar por samambaia, jiboia...">
+        </div>
+        
+        <div id="lista" class="grid"></div>
     </div>
 
     <script>
-        let plantasGlobais = [];
-        
-        async function carregarPlantas() {
-            const url = 'https://githubusercontent.com';
-            const container = document.getElementById('lista');
-            
-            try {
-                const resposta = await fetch(url);
-                if (!resposta.ok) throw new Error();
-                const dadosAPI = await resposta.json();
-              
-                plantasGlobais = dadosAPI.slice(0, 30).map(p => ({
-                    name: p.common_name || p.scientific_name,
-                    slug: p.scientific_name || "Planta Catalogada",
-                    foto: p.image_url || 'https://unsplash.com',
-                    meta_description: `Linda espécie da família ${p.family || 'Botânica'}. Ideal para cultivar com carinho, terra fértil e rega bem equilibrada.`
-                }));
-                mostrarPlantas(plantasGlobais);
-            } catch (erro) {
-                container.innerHTML = "<p style='grid-column: 1/-1; text-align: center;'>Erro ao carregar os dados da API externa.</p>";
+        // Ao invés de depender de uma API externa (que em português são raras e cobram), 
+        // criamos uma base de dados interna rica e super rápida.
+        const plantasBrasileiras = [
+            {
+                name: "Jiboia",
+                slug: "Epipremnum aureum",
+                foto: "https://images.unsplash.com/photo-1614594975525-e45190c55d0b?auto=format&fit=crop&w=600&q=80",
+                rega: "1 a 2 vezes por semana. Deixe o solo secar levemente entre as regas.",
+                luz: "Luz indireta ou meia-sombra. Evite o sol direto."
+            },
+            {
+                name: "Samambaia Americana",
+                slug: "Nephrolepis exaltata",
+                foto: "https://images.unsplash.com/photo-1620127252536-0ba468156100?auto=format&fit=crop&w=600&q=80",
+                rega: "Mantenha a terra sempre úmida (não encharcada), regando 2 a 3 vezes na semana.",
+                luz: "Gosta de muita claridade, mas sem sol direto que queima suas folhas."
+            },
+            {
+                name: "Espada-de-São-Jorge",
+                slug: "Sansevieria trifasciata",
+                foto: "https://images.unsplash.com/photo-1596547609652-9fc5d8d428ce?auto=format&fit=crop&w=600&q=80",
+                rega: "A cada 10 a 15 dias. É muito resistente, não tolera excesso de água.",
+                luz: "Adapta-se muito bem a sol pleno, meia-sombra ou até pouca luz."
+            },
+            {
+                name: "Costela-de-Adão",
+                slug: "Monstera deliciosa",
+                foto: "https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2?auto=format&fit=crop&w=600&q=80",
+                rega: "1 a 2 vezes por semana. Gosta de ter suas folhas borrifadas com água.",
+                luz: "Meia-sombra ou luz difusa brilhante. Cuidado com o sol do meio-dia."
+            },
+            {
+                name: "Zamioculca",
+                slug: "Zamioculcas zamiifolia",
+                foto: "https://images.unsplash.com/photo-1632207691143-643e2a9a9361?auto=format&fit=crop&w=600&q=80",
+                rega: "1 vez por semana ou a cada 15 dias. Melhor faltar água do que sobrar.",
+                luz: "A planta guerreira! Sobrevive muito bem em ambientes com pouquíssima luz."
+            },
+            {
+                name: "Lírio-da-Paz",
+                slug: "Spathiphyllum wallisii",
+                foto: "https://images.unsplash.com/photo-1593691509543-c20fb51c0b47?auto=format&fit=crop&w=600&q=80",
+                rega: "3 a 4 vezes por semana. Se as folhas murcharem, ela está com sede!",
+                luz: "Meia-sombra. Ideal para interiores com luz moderada."
+            },
+            {
+                name: "Suculenta Echeveria",
+                slug: "Echeveria spp.",
+                foto: "https://images.unsplash.com/photo-1509423350716-97f9360b4e09?auto=format&fit=crop&w=600&q=80",
+                rega: "Somente quando a terra estiver completamente seca (geralmente 1x na semana).",
+                luz: "Sol pleno. Ela precisa de luz direta por algumas horas diárias."
+            },
+            {
+                name: "Ficus Lyrata",
+                slug: "Ficus lyrata",
+                foto: "https://images.unsplash.com/photo-1629559381533-3d14ab5d691e?auto=format&fit=crop&w=600&q=80",
+                rega: "1 vez por semana. Deixe secar bem os primeiros dedos do solo.",
+                luz: "Gosta de luz filtrada e abundante. Fica feliz próximo a grandes janelas."
             }
-        }
+        ];
 
         function mostrarPlantas(lista) {
             const container = document.getElementById('lista');
             if (lista.length === 0) {
-                container.innerHTML = "<p style='grid-column: 1/-1; text-align: center;'>Nenhuma plantinha localizada.</p>";
+                container.innerHTML = "<p style='grid-column: 1/-1; text-align: center; font-size: 1.2rem; color: #405c48; margin-top: 40px;'>Nenhuma plantinha encontrada com esse nome. 😢</p>";
                 return;
             }
             container.innerHTML = lista.map(p => `
                 <div class="card">
-                    <img src="${p.foto}" alt="${p.name}" onerror="this.src='https://unsplash.com'">
+                    <img src="${p.foto}" alt="${p.name}">
                     <div class="card-conteudo">
-                        <h3 style="margin: 0; color: #1b4332; text-transform: capitalize;">${p.name}</h3>
-                        <p class="apelido">❤️ ${p.slug}</p>
-                        <p class="descricao">🌱 <b>Dicas de cuidado:</b> ${p.meta_description}</p>
+                        <div class="nome-cientifico">${p.slug}</div>
+                        <h3 class="nome-comum">${p.name}</h3>
+                        
+                        <div class="info-dica">
+                            <div class="dica-item">
+                                <span class="dica-icone">💧</span>
+                                <div><strong>Rega:</strong> ${p.rega}</div>
+                            </div>
+                            <div class="dica-item">
+                                <span class="dica-icone">☀️</span>
+                                <div><strong>Luz:</strong> ${p.luz}</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             `).join('');
@@ -72,13 +172,14 @@
 
         document.getElementById('busca').addEventListener('input', (e) => {
             const termo = e.target.value.toLowerCase();
-            const filtradas = plantasGlobais.filter(p => 
+            const filtradas = plantasBrasileiras.filter(p => 
                 p.name.toLowerCase().includes(termo) || p.slug.toLowerCase().includes(termo)
             );
             mostrarPlantas(filtradas);
         });
 
-        carregarPlantas();
+        // Iniciar já exibindo as plantas na tela
+        mostrarPlantas(plantasBrasileiras);
     </script>
 </body>
 </html>
