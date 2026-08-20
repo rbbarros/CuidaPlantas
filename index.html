@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Guia de Plantinhas</title>
+    <style>
+        body { font-family: system-ui, sans-serif; background: #e8f5e9; padding: 20px; color: #1e3322; margin: 0; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        h2 { margin-bottom: 5px; color: #1b4332; }
+        .subtitulo { color: #555; margin-bottom: 20px; font-size: 14px; }
+        .busca { width: 100%; padding: 12px; margin-bottom: 25px; font-size: 16px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; background: white; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .card { background: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); display: flex; flex-direction: column; overflow: hidden; border-top: 4px solid #2d6a4f; }
+        .card img { width: 100%; height: 180px; object-fit: cover; }
+        .card-conteudo { padding: 16px; }
+        .apelido { font-size: 13px; color: #4b6351; font-weight: 500; margin: 4px 0 12px 0; }
+        .descricao { font-size: 14px; line-height: 1.5; margin: 0; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>🌱 Guia de Cuidados das Suas Plantinhas</h2>
+        <div class="subtitulo">Aprenda de um jeito simples e fácil a cuidar, regar e dar amor para as plantinhas da sua casa!</div>
+        
+        <input type="text" id="busca" class="busca" placeholder="🔍 Digite o nome da plantinha (Ex: Jiboia)...">
+        <div id="lista" class="grid">Procurando suas plantinhas...</div>
+    </div>
+
+    <script>
+        let plantasGlobais = [];
+        
+        async function carregarPlantas() {
+            const url = 'https://githubusercontent.com';
+            const container = document.getElementById('lista');
+            
+            try {
+                const resposta = await fetch(url);
+                if (!resposta.ok) throw new Error();
+                const dadosAPI = await resposta.json();
+              
+                plantasGlobais = dadosAPI.slice(0, 30).map(p => ({
+                    name: p.common_name || p.scientific_name,
+                    slug: p.scientific_name || "Planta Catalogada",
+                    foto: p.image_url || 'https://unsplash.com',
+                    meta_description: `Linda espécie da família ${p.family || 'Botânica'}. Ideal para cultivar com carinho, terra fértil e rega bem equilibrada.`
+                }));
+                mostrarPlantas(plantasGlobais);
+            } catch (erro) {
+                container.innerHTML = "<p style='grid-column: 1/-1; text-align: center;'>Erro ao carregar os dados da API externa.</p>";
+            }
+        }
+
+        function mostrarPlantas(lista) {
+            const container = document.getElementById('lista');
+            if (lista.length === 0) {
+                container.innerHTML = "<p style='grid-column: 1/-1; text-align: center;'>Nenhuma plantinha localizada.</p>";
+                return;
+            }
+            container.innerHTML = lista.map(p => `
+                <div class="card">
+                    <img src="${p.foto}" alt="${p.name}" onerror="this.src='https://unsplash.com'">
+                    <div class="card-conteudo">
+                        <h3 style="margin: 0; color: #1b4332; text-transform: capitalize;">${p.name}</h3>
+                        <p class="apelido">❤️ ${p.slug}</p>
+                        <p class="descricao">🌱 <b>Dicas de cuidado:</b> ${p.meta_description}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        document.getElementById('busca').addEventListener('input', (e) => {
+            const termo = e.target.value.toLowerCase();
+            const filtradas = plantasGlobais.filter(p => 
+                p.name.toLowerCase().includes(termo) || p.slug.toLowerCase().includes(termo)
+            );
+            mostrarPlantas(filtradas);
+        });
+
+        carregarPlantas();
+    </script>
+</body>
+</html>
+
