@@ -1,55 +1,220 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meu Guia de Plantinhas</title>
-    <style>
-        body { font-family: sans-serif; padding: 20px; background: #e8f5e9; margin: 0; }
-        .grid { display: flex; flex-wrap: wrap; gap: 20px; }
-        .card { background: white; border-radius: 12px; width: 280px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); cursor: pointer; }
-        .card img { width: 100%; height: 180px; object-fit: cover; }
-        .content { padding: 15px; }
-        .card h3 { margin: 0 0 10px 0; color: #1b4332; }
-        .info { background: #f1f8e9; padding: 10px; border-radius: 6px; font-size: 0.85rem; color: #2d6a4f; max-height: 75px; overflow: hidden; transition: max-height 0.3s ease; }
-        .card.ativo .info { max-height: 1000px; }
-        .info p { margin: 5px 0 0 0; }
-    </style>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CuidaPlantas</title>
+
+<style>
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #e8f5e9;
+    text-align: center;
+    color: #2e7d32;
+}
+
+h1 {
+    color: #1b5e20;
+}
+
+
+.grid {
+
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+.card {
+    background: white;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 3px 8px #aaa;
+}
+
+img {
+    width: 200px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+button {
+    background-color: #2e7d32;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #1b5e20;
+}
+
+</style>
 </head>
+
 <body>
-    <h1>🌿 Meu Guia de Plantinhas</h1>
-    <p>Clique no card para ler o texto completo!</p>
-    <div class="grid" id="plantas">Carregando...</div>
 
-    <script>
-        const plantas = [
-            { id: "Epipremnum_aureum", nome: "Epipremnum aureum" },
-            { id: "Samambaia", nome: "Samambaia" },
-            { id: "Dracaena_trifasciata", nome: "Dracaena trifasciata" },
-            { id: "Monstera_deliciosa", nome: "Monstera deliciosa" },
-            { id: "Zamioculcas", nome: "Zamioculcas" },
-            { id: "Spathiphyllum_wallisii", nome: "Spathiphyllum" }
-        ];
+<h1>Cuida Plantas 🌱</h1>
 
-        async function carregar() {
-            const grid = document.getElementById("plantas");
-            grid.innerHTML = "";
-            for (const p of plantas) {
-                try {
-                    const res = await fetch(`https://pt.wikipedia.org/api/rest_v1/page/summary/${p.id}`);
-                    const d = await res.json();
-                    grid.innerHTML += `
-                        <div class="card" onclick="this.classList.toggle('ativo')">
-                            <img src="${d.thumbnail ? d.thumbnail.source : ''}" alt="${p.nome}">
-                            <div class="content">
-                                <h3>${p.nome}</h3>
-                                <div class="info"><strong>📖 Info API:</strong><p>${d.extract || ''}</p></div>
-                            </div>
-                        </div>`;
-                } catch (e) { console.error(e); }
-            }
-        }
-        carregar();
-    </script>
+<p>Descubra plantas ideais para sua casa e aprenda como cuidar delas!</p>
+
+<div class="grid" id="plants">
+    carregando plantas...
+</div>
+
+<script>
+
+const plantas = [
+
+{
+nome:"Jiboia",
+cientifico:"Epipremnum aureum",
+rega:"A cada 3 a 5 dias",
+busca:"Epipremnum aureum",
+cuidado:"Luz indireta, ótima para ambientes internos e fácil para iniciantes."
+},
+
+{
+nome:"Espada-de-São-Jorge",
+cientifico:"Dracaena trifasciata",
+rega:"A cada 10 a 15 dias",
+busca:"Sansevieria trifasciata",
+cuidado:"Muito resistente. Pode ficar em locais com pouca luz."
+},
+
+{
+nome:"Samambaia",
+cientifico:"Nephrolepis exaltata",
+rega:"2 a 3 vezes por semana",
+busca:"Nephrolepis exaltata",
+cuidado:"Gosta de umidade e luz indireta."
+},
+
+{
+nome:"Zamioculca",
+cientifico:"Zamioculcas zamiifolia",
+rega:"A cada 7 a 10 dias",
+busca:"Zamioculcas zamiifolia",
+cuidado:"Ideal para apartamentos e pessoas que esquecem de regar."
+},
+
+{
+nome:"Lírio-da-paz",
+cientifico:"Spathiphyllum",
+rega:"2 a 3 vezes por semana",
+busca:"Spathiphyllum plant",
+cuidado:"Prefere sombra e solo sempre levemente úmido."
+},
+
+{
+nome:"Costela-de-Adão",
+cientifico:"Monstera deliciosa",
+rega:"1 a 2 vezes por semana",
+busca:"Monstera deliciosa",
+cuidado:"Gosta de ambientes iluminados sem sol direto."
+},
+
+{
+nome:"Pilea",
+cientifico:"Pilea peperomioides",
+rega:"A cada 5 a 7 dias",
+busca:"Pilea peperomioides",
+cuidado:"Prefere locais claros e protegidos do sol forte."
+},
+
+{
+nome:"Peperômia",
+cientifico:"Peperomia obtusifolia",
+rega:"A cada 5 a 7 dias",
+busca:"Peperomia obtusifolia",
+cuidado:"Boa para interiores e vasos pequenos."
+},
+
+{
+nome:"Suculentas",
+cientifico:"Diversas espécies",
+rega:"A cada 10 a 15 dias",
+busca:"succulent plant",
+cuidado:"Precisam de bastante luz e pouca água."
+},
+
+{
+nome:"Cactos",
+cientifico:"Cactaceae",
+rega:"A cada 15 a 30 dias",
+busca:"cactus plant",
+cuidado:"Resistentes e ideais para locais ensolarados."
+}
+
+];
+
+function mostrarCuidados(texto){
+    alert(texto);
+}
+
+async function carregarPlantas(){
+
+const grid = document.querySelector("#plants");
+
+grid.innerHTML="";
+
+plantas.forEach(async planta => {
+
+const API =
+
+"https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch="
++ planta.busca +
+"&gsrnamespace=6&gsrlimit=1&prop=imageinfo&iiprop=url&format=json&origin=*";
+
+const resposta = await fetch(API);
+
+const dados = await resposta.json();
+
+let imagem="";
+
+if(dados.query){
+
+imagem = Object.values(dados.query.pages)[0]
+.imageinfo[0].url;
+
+}
+
+grid.innerHTML += `
+
+<div class="card">
+
+<img src="${imagem}" alt="${planta.nome}">
+
+<h3>${planta.nome} 🌿</h3>
+
+<p>
+<b>Nome científico:</b><br>
+${planta.cientifico}
+</p>
+
+<p>
+💧 ${planta.rega}
+</p>
+
+<button onclick="mostrarCuidados('${planta.cuidado}')">
+Ver cuidados
+</button>
+
+</div>
+
+`;
+
+});
+}
+carregarPlantas();
+</script>
 </body>
 </html>
