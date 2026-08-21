@@ -5,6 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Descubra plantas ideais para sua casa e aprenda como cuidar delas!">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#2e7d32">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>">
     <title>CuidaPlantas</title>
 
     <style>
@@ -42,7 +45,8 @@
         .img-container {
             width: 200px;
             height: 150px;
-            background-color: #e0e0e0;
+            aspect-ratio: 4/3;
+            background-color: #c8e6c9;
             border-radius: 10px;
             overflow: hidden;
         }
@@ -99,8 +103,13 @@
         }
 
         async function buscarImagemPlanta(termoBusca) {
+            // Verificar cache primeiro
+            const cacheKey = "img_" + termoBusca;
+            const cached = localStorage.getItem(cacheKey);
+            if (cached) return cached;
+
             const API = "https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch="
-                + encodeURIComponent(termoBusca) + "&gsrnamespace=6&gsrlimit=1&prop=pageimages&piprop=thumbnail&pithumbsize=400&format=json&origin=*";
+                + encodeURIComponent(termoBusca) + "&gsrnamespace=6&gsrlimit=1&prop=pageimages&piprop=thumbnail&pithumbsize=250&format=json&origin=*";
 
             try {
                 const resposta = await fetch(API);
@@ -110,7 +119,9 @@
                 if (dados.query) {
                     const page = Object.values(dados.query.pages)[0];
                     if (page.thumbnail) {
-                        return page.thumbnail.source;
+                        const url = page.thumbnail.source.replace(/^http:/, 'https:');
+                        localStorage.setItem(cacheKey, url);
+                        return url;
                     }
                 }
             } catch (erro) {
@@ -122,27 +133,19 @@
         async function carregarPlantas() {
             const grid = document.querySelector("#plants");
 
-            // Executa os fetches de forma paralela
-            const plantasComImagens = await Promise.all(
-                plantas.map(async (planta) => {
-                    const imagemUrl = await buscarImagemPlanta(planta.busca);
-                    return { ...planta, imagemUrl };
-                })
-            );
-
-            grid.innerHTML = plantasComImagens.map((planta, index) => `
+            grid.innerHTML = plantas.map((planta, index) => `
                 <div class="card">
                     <div class="img-container">
-                        ${planta.imagemUrl ? `
-                            <img 
-                                src="${planta.imagemUrl}" 
-                                alt="${planta.nome}" 
-                                width="200" 
-                                height="150" 
-                                loading="${index < 2 ? 'eager' : 'lazy'}"
-                                ${index === 0 ? 'fetchpriority="high"' : ''}
-                            >
-                        ` : ''}
+                        <img 
+                            src="" 
+                            alt="${planta.nome}" 
+                            width="200" 
+                            height="150" 
+                            loading="${index < 2 ? 'eager' : 'lazy'}"
+                            ${index === 0 ? 'fetchpriority="high"' : ''}
+                            data-busca="${planta.busca}"
+                            style="display:none;"
+                        >
                     </div>
                     <h3>${planta.nome} 🌿</h3>
                     <p><b>Nome científico:</b><br>${planta.cientifico}</p>
@@ -150,6 +153,15 @@
                     <button onclick="mostrarCuidados('${planta.cuidado}')">Ver cuidados</button>
                 </div>
             `).join('');
+
+            const imagens = grid.querySelectorAll("img[data-busca]");
+            imagens.forEach(async (img) => {
+                const url = await buscarImagemPlanta(img.dataset.busca);
+                if (url) {
+                    img.src = url;
+                    img.style.display = "block";
+                }
+            });
         }
 
         carregarPlantas();
