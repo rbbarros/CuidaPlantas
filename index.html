@@ -39,12 +39,21 @@
             justify-content: space-between;
         }
 
-        img {
+        .img-container {
             width: 200px;
             height: 150px;
-            object-fit: cover;
+            background-color: #e0e0e0;
             border-radius: 10px;
-            background-color: #f0f0f0;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         button {
@@ -55,6 +64,7 @@
             border-radius: 8px;
             cursor: pointer;
             width: 100%;
+            margin-top: 10px;
         }
 
         button:hover {
@@ -68,62 +78,31 @@
     <h1>Cuida Plantas 🌱</h1>
     <p>Descubra plantas ideais para sua casa e aprenda como cuidar delas!</p>
 
-    <div class="grid" id="plants">
-        <p>Carregando plantas...</p>
-    </div>
+    <div class="grid" id="plants"></div>
 
     <script>
         const plantas = [
-            { nome: "Jiboia", cientifico: "Epipremnum aureum", rega: "A cada 3 a 5 dias", busca: "Epipremnum aureum", cuidado: "Luz indireta, ótima para ambientes internos e fácil para iniciantes." },
-            { nome: "Espada-de-São-Jorge", cientifico: "Dracaena trifasciata", rega: "A cada 10 a 15 dias", busca: "Sansevieria trifasciata", cuidado: "Muito resistente. Pode ficar em locais com pouca luz." },
-            { nome: "Samambaia", cientifico: "Nephrolepis exaltata", rega: "2 a 3 vezes por semana", busca: "Nephrolepis exaltata", cuidado: "Gosta de umidade e luz indireta." },
-            { nome: "Zamioculca", cientifico: "Zamioculcas zamiifolia", rega: "A cada 7 a 10 dias", busca: "Zamioculcas zamiifolia", cuidado: "Ideal para apartamentos e pessoas que esquecem de regar." },
-            { nome: "Lírio-da-paz", cientifico: "Spathiphyllum", rega: "2 a 3 vezes por semana", busca: "Spathiphyllum plant", cuidado: "Prefere sombra e solo sempre levemente úmido." },
-            { nome: "Costela-de-Adão", cientifico: "Monstera deliciosa", rega: "1 a 2 vezes por semana", busca: "Monstera deliciosa", cuidado: "Gosta de ambientes iluminados sem sol direto." },
-            { nome: "Pilea", cientifico: "Pilea peperomioides", rega: "A cada 5 a 7 dias", busca: "Pilea peperomioides", cuidado: "Prefere locais claros e protegidos do sol forte." },
-            { nome: "Peperômia", cientifico: "Peperomia obtusifolia", rega: "A cada 5 a 7 dias", busca: "Peperomia obtusifolia", cuidado: "Boa para interiores e vasos pequenos." },
-            { nome: "Suculentas", cientifico: "Diversas espécies", rega: "A cada 10 a 15 dias", busca: "succulent plant", cuidado: "Precisam de bastante luz e pouca água." },
-            { nome: "Cactos", cientifico: "Cactaceae", rega: "A cada 15 a 30 dias", busca: "cactus plant", cuidado: "Resistentes e ideais para locais ensolarados." }
+            { id: 0, nome: "Jiboia", cientifico: "Epipremnum aureum", rega: "A cada 3 a 5 dias", busca: "Epipremnum aureum", cuidado: "Luz indireta, ótima para ambientes internos e fácil para iniciantes." },
+            { id: 1, nome: "Espada-de-São-Jorge", cientifico: "Dracaena trifasciata", rega: "A cada 10 a 15 dias", busca: "Sansevieria trifasciata", cuidado: "Muito resistente. Pode ficar em locais com pouca luz." },
+            { id: 2, nome: "Samambaia", cientifico: "Nephrolepis exaltata", rega: "2 a 3 vezes por semana", busca: "Nephrolepis exaltata", cuidado: "Gosta de umidade e luz indireta." },
+            { id: 3, nome: "Zamioculca", cientifico: "Zamioculcas zamiifolia", rega: "A cada 7 a 10 dias", busca: "Zamioculcas zamiifolia", cuidado: "Ideal para apartamentos e pessoas que esquecem de regar." },
+            { id: 4, nome: "Lírio-da-paz", cientifico: "Spathiphyllum", rega: "2 a 3 vezes por semana", busca: "Spathiphyllum plant", cuidado: "Prefere sombra e solo sempre levemente úmido." },
+            { id: 5, nome: "Costela-de-Adão", cientifico: "Monstera deliciosa", rega: "1 a 2 vezes por semana", busca: "Monstera deliciosa", cuidado: "Gosta de ambientes iluminados sem sol direto." },
+            { id: 6, nome: "Pilea", cientifico: "Pilea peperomioides", rega: "A cada 5 a 7 dias", busca: "Pilea peperomioides", cuidado: "Prefere locais claros e protegidos do sol forte." },
+            { id: 7, nome: "Peperômia", cientifico: "Peperomia obtusifolia", rega: "A cada 5 a 7 dias", busca: "Peperomia obtusifolia", cuidado: "Boa para interiores e vasos pequenos." },
+            { id: 8, nome: "Suculentas", cientifico: "Diversas espécies", rega: "A cada 10 a 15 dias", busca: "succulent plant", cuidado: "Precisam de bastante luz e pouca água." },
+            { id: 9, nome: "Cactos", cientifico: "Cactaceae", rega: "A cada 15 a 30 dias", busca: "cactus plant", cuidado: "Resistentes e ideais para locais ensolarados." }
         ];
 
         function mostrarCuidados(texto) {
             alert(texto);
         }
 
-        async function buscarImagem(busca) {
-            const API = "https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch="
-                + encodeURIComponent(busca) + "&gsrnamespace=6&gsrlimit=1&prop=imageinfo&iiprop=url&format=json&origin=*";
-            
-            try {
-                const resposta = await fetch(API);
-                const dados = await resposta.json();
-                if (dados.query) {
-                    return Object.values(dados.query.pages)[0].imageinfo[0].url;
-                }
-            } catch (e) {
-                console.error("Erro ao buscar imagem:", e);
-            }
-            return "";
-        }
-
-        async function carregarPlantas() {
+        function renderizarEstrutura() {
             const grid = document.querySelector("#plants");
-
-            const plantasComImagens = await Promise.all(plantas.map(async (planta) => {
-                const imagem = await buscarImagem(planta.busca);
-                return { ...planta, imagem };
-            }));
-
-            grid.innerHTML = plantasComImagens.map((planta, index) => `
+            grid.innerHTML = plantas.map(planta => `
                 <div class="card">
-                    <img 
-                        src="${planta.imagem}" 
-                        alt="${planta.nome}" 
-                        width="200" 
-                        height="150" 
-                        loading="${index < 2 ? 'eager' : 'lazy'}" 
-                        ${index === 0 ? 'fetchpriority="high"' : ''}
-                    >
+                    <div class="img-container" id="img-box-${planta.id}"></div>
                     <h3>${planta.nome} 🌿</h3>
                     <p><b>Nome científico:</b><br>${planta.cientifico}</p>
                     <p>💧 ${planta.rega}</p>
@@ -132,7 +111,36 @@
             `).join('');
         }
 
-        carregarPlantas();
+    
+        async function carregarImagens() {
+            for (const planta of plantas) {
+                const API = "https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch="
+                    + encodeURIComponent(planta.busca) + "&gsrnamespace=6&gsrlimit=1&prop=pageimages&piprop=thumbnail&pithumbsize=400&format=json&origin=*";
+
+                try {
+                    const resposta = await fetch(API);
+                    const dados = await resposta.json();
+                    let urlImagem = "";
+
+                    if (dados.query) {
+                        const page = Object.values(dados.query.pages)[0];
+                        if (page.thumbnail) {
+                            urlImagem = page.thumbnail.source;
+                        }
+                    }
+
+                    const box = document.getElementById(`img-box-${planta.id}`);
+                    if (box && urlImagem) {
+                        box.innerHTML = `<img src="${urlImagem}" alt="${planta.nome}" width="200" height="150" loading="lazy">`;
+                    }
+                } catch (e) {
+                    console.error("Erro na imagem:", e);
+                }
+            }
+        }
+
+        renderizarEstrutura();
+        carregarImagens();
     </script>
 </body>
 
