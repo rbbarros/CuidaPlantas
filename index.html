@@ -8,6 +8,10 @@
     <meta name="robots" content="index, follow">
     <meta name="theme-color" content="#2e7d32">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>">
+    <link rel="preconnect" href="https://commons.wikimedia.org" crossorigin>
+    <link rel="preconnect" href="https://upload.wikimedia.org" crossorigin>
+    <link rel="dns-prefetch" href="https://commons.wikimedia.org">
+    <link rel="dns-prefetch" href="https://upload.wikimedia.org">
     <title>CuidaPlantas</title>
 
     <style>
@@ -130,7 +134,15 @@
             return "";
         }
 
-        async function carregarPlantas() {
+        async function carregarImagem(img) {
+            const url = await buscarImagemPlanta(img.dataset.busca);
+            if (url) {
+                img.src = url;
+                img.style.display = "block";
+            }
+        }
+
+        function carregarPlantas() {
             const grid = document.querySelector("#plants");
 
             grid.innerHTML = plantas.map((planta, index) => `
@@ -154,14 +166,20 @@
                 </div>
             `).join('');
 
-            const imagens = grid.querySelectorAll("img[data-busca]");
-            imagens.forEach(async (img) => {
-                const url = await buscarImagemPlanta(img.dataset.busca);
-                if (url) {
-                    img.src = url;
-                    img.style.display = "block";
-                }
-            });
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target.querySelector('img[data-busca]');
+                        if (img && !img.dataset.loaded) {
+                            img.dataset.loaded = 'true';
+                            carregarImagem(img);
+                        }
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { rootMargin: '200px' });
+
+            grid.querySelectorAll('.card').forEach(card => observer.observe(card));
         }
 
         carregarPlantas();
