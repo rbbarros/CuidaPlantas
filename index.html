@@ -2,219 +2,138 @@
 <html lang="pt-BR">
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Descubra plantas ideais para sua casa e aprenda como cuidar delas!">
+    <title>CuidaPlantas</title>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e8f5e9;
+            text-align: center;
+            color: #2e7d32;
+            margin: 0;
+            padding: 20px;
+        }
 
-<title>CuidaPlantas</title>
+        h1 {
+            color: #1b5e20;
+        }
 
-<style>
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
 
-body {
-    font-family: Arial, sans-serif;
-    background-color: #e8f5e9;
-    text-align: center;
-    color: #2e7d32;
-}
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 3px 8px #aaa;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+        }
 
-h1 {
-    color: #1b5e20;
-}
+        img {
+            width: 200px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 10px;
+            background-color: #f0f0f0;
+        }
 
+        button {
+            background-color: #2e7d32;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+        }
 
-.grid {
-
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-    gap: 20px;
-    padding: 20px;
-}
-
-.card {
-    background: white;
-    border-radius: 12px;
-    padding: 15px;
-    box-shadow: 0 3px 8px #aaa;
-}
-
-img {
-    width: 200px;
-    height: 150px;
-    object-fit: cover;
-    border-radius: 10px;
-}
-
-button {
-    background-color: #2e7d32;
-    color: white;
-    border: none;
-    padding: 10px;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-button:hover {
-    background-color: #1b5e20;
-}
-
-</style>
+        button:hover {
+            background-color: #1b5e20;
+        }
+    </style>
 </head>
 
 <body>
 
-<h1>Cuida Plantas 🌱</h1>
+    <h1>Cuida Plantas 🌱</h1>
+    <p>Descubra plantas ideais para sua casa e aprenda como cuidar delas!</p>
 
-<p>Descubra plantas ideais para sua casa e aprenda como cuidar delas!</p>
+    <div class="grid" id="plants">
+        <p>Carregando plantas...</p>
+    </div>
 
-<div class="grid" id="plants">
-    carregando plantas...
-</div>
+    <script>
+        const plantas = [
+            { nome: "Jiboia", cientifico: "Epipremnum aureum", rega: "A cada 3 a 5 dias", busca: "Epipremnum aureum", cuidado: "Luz indireta, ótima para ambientes internos e fácil para iniciantes." },
+            { nome: "Espada-de-São-Jorge", cientifico: "Dracaena trifasciata", rega: "A cada 10 a 15 dias", busca: "Sansevieria trifasciata", cuidado: "Muito resistente. Pode ficar em locais com pouca luz." },
+            { nome: "Samambaia", cientifico: "Nephrolepis exaltata", rega: "2 a 3 vezes por semana", busca: "Nephrolepis exaltata", cuidado: "Gosta de umidade e luz indireta." },
+            { nome: "Zamioculca", cientifico: "Zamioculcas zamiifolia", rega: "A cada 7 a 10 dias", busca: "Zamioculcas zamiifolia", cuidado: "Ideal para apartamentos e pessoas que esquecem de regar." },
+            { nome: "Lírio-da-paz", cientifico: "Spathiphyllum", rega: "2 a 3 vezes por semana", busca: "Spathiphyllum plant", cuidado: "Prefere sombra e solo sempre levemente úmido." },
+            { nome: "Costela-de-Adão", cientifico: "Monstera deliciosa", rega: "1 a 2 vezes por semana", busca: "Monstera deliciosa", cuidado: "Gosta de ambientes iluminados sem sol direto." },
+            { nome: "Pilea", cientifico: "Pilea peperomioides", rega: "A cada 5 a 7 dias", busca: "Pilea peperomioides", cuidado: "Prefere locais claros e protegidos do sol forte." },
+            { nome: "Peperômia", cientifico: "Peperomia obtusifolia", rega: "A cada 5 a 7 dias", busca: "Peperomia obtusifolia", cuidado: "Boa para interiores e vasos pequenos." },
+            { nome: "Suculentas", cientifico: "Diversas espécies", rega: "A cada 10 a 15 dias", busca: "succulent plant", cuidado: "Precisam de bastante luz e pouca água." },
+            { nome: "Cactos", cientifico: "Cactaceae", rega: "A cada 15 a 30 dias", busca: "cactus plant", cuidado: "Resistentes e ideais para locais ensolarados." }
+        ];
 
-<script>
+        function mostrarCuidados(texto) {
+            alert(texto);
+        }
 
-const plantas = [
+        async function buscarImagem(busca) {
+            const API = "https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch="
+                + encodeURIComponent(busca) + "&gsrnamespace=6&gsrlimit=1&prop=imageinfo&iiprop=url&format=json&origin=*";
+            
+            try {
+                const resposta = await fetch(API);
+                const dados = await resposta.json();
+                if (dados.query) {
+                    return Object.values(dados.query.pages)[0].imageinfo[0].url;
+                }
+            } catch (e) {
+                console.error("Erro ao buscar imagem:", e);
+            }
+            return "";
+        }
 
-{
-nome:"Jiboia",
-cientifico:"Epipremnum aureum",
-rega:"A cada 3 a 5 dias",
-busca:"Epipremnum aureum",
-cuidado:"Luz indireta, ótima para ambientes internos e fácil para iniciantes."
-},
+        async function carregarPlantas() {
+            const grid = document.querySelector("#plants");
 
-{
-nome:"Espada-de-São-Jorge",
-cientifico:"Dracaena trifasciata",
-rega:"A cada 10 a 15 dias",
-busca:"Sansevieria trifasciata",
-cuidado:"Muito resistente. Pode ficar em locais com pouca luz."
-},
+            const plantasComImagens = await Promise.all(plantas.map(async (planta) => {
+                const imagem = await buscarImagem(planta.busca);
+                return { ...planta, imagem };
+            }));
 
-{
-nome:"Samambaia",
-cientifico:"Nephrolepis exaltata",
-rega:"2 a 3 vezes por semana",
-busca:"Nephrolepis exaltata",
-cuidado:"Gosta de umidade e luz indireta."
-},
+            grid.innerHTML = plantasComImagens.map((planta, index) => `
+                <div class="card">
+                    <img 
+                        src="${planta.imagem}" 
+                        alt="${planta.nome}" 
+                        width="200" 
+                        height="150" 
+                        loading="${index < 2 ? 'eager' : 'lazy'}" 
+                        ${index === 0 ? 'fetchpriority="high"' : ''}
+                    >
+                    <h3>${planta.nome} 🌿</h3>
+                    <p><b>Nome científico:</b><br>${planta.cientifico}</p>
+                    <p>💧 ${planta.rega}</p>
+                    <button onclick="mostrarCuidados('${planta.cuidado}')">Ver cuidados</button>
+                </div>
+            `).join('');
+        }
 
-{
-nome:"Zamioculca",
-cientifico:"Zamioculcas zamiifolia",
-rega:"A cada 7 a 10 dias",
-busca:"Zamioculcas zamiifolia",
-cuidado:"Ideal para apartamentos e pessoas que esquecem de regar."
-},
-
-{
-nome:"Lírio-da-paz",
-cientifico:"Spathiphyllum",
-rega:"2 a 3 vezes por semana",
-busca:"Spathiphyllum plant",
-cuidado:"Prefere sombra e solo sempre levemente úmido."
-},
-
-{
-nome:"Costela-de-Adão",
-cientifico:"Monstera deliciosa",
-rega:"1 a 2 vezes por semana",
-busca:"Monstera deliciosa",
-cuidado:"Gosta de ambientes iluminados sem sol direto."
-},
-
-{
-nome:"Pilea",
-cientifico:"Pilea peperomioides",
-rega:"A cada 5 a 7 dias",
-busca:"Pilea peperomioides",
-cuidado:"Prefere locais claros e protegidos do sol forte."
-},
-
-{
-nome:"Peperômia",
-cientifico:"Peperomia obtusifolia",
-rega:"A cada 5 a 7 dias",
-busca:"Peperomia obtusifolia",
-cuidado:"Boa para interiores e vasos pequenos."
-},
-
-{
-nome:"Suculentas",
-cientifico:"Diversas espécies",
-rega:"A cada 10 a 15 dias",
-busca:"succulent plant",
-cuidado:"Precisam de bastante luz e pouca água."
-},
-
-{
-nome:"Cactos",
-cientifico:"Cactaceae",
-rega:"A cada 15 a 30 dias",
-busca:"cactus plant",
-cuidado:"Resistentes e ideais para locais ensolarados."
-}
-
-];
-
-function mostrarCuidados(texto){
-    alert(texto);
-}
-
-async function carregarPlantas(){
-
-const grid = document.querySelector("#plants");
-
-grid.innerHTML="";
-
-plantas.forEach(async planta => {
-
-const API =
-
-"https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch="
-+ planta.busca +
-"&gsrnamespace=6&gsrlimit=1&prop=imageinfo&iiprop=url&format=json&origin=*";
-
-const resposta = await fetch(API);
-
-const dados = await resposta.json();
-
-let imagem="";
-
-if(dados.query){
-
-imagem = Object.values(dados.query.pages)[0]
-.imageinfo[0].url;
-
-}
-
-grid.innerHTML += `
-
-<div class="card">
-
-<img src="${imagem}" alt="${planta.nome}">
-
-<h3>${planta.nome} 🌿</h3>
-
-<p>
-<b>Nome científico:</b><br>
-${planta.cientifico}
-</p>
-
-<p>
-💧 ${planta.rega}
-</p>
-
-<button onclick="mostrarCuidados('${planta.cuidado}')">
-Ver cuidados
-</button>
-
-</div>
-
-`;
-
-});
-}
-carregarPlantas();
-</script>
+        carregarPlantas();
+    </script>
 </body>
+
 </html>
