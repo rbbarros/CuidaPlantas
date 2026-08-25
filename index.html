@@ -31,6 +31,21 @@
     </main>
 
     <script>
+
+       const nomes = {
+        "flowering-maple": "Ácer-florido",
+        "snake plant": "Espada-de-São-Jorge",
+        "peace lily": "Lírio-da-Paz",
+        "pothos": "Jiboia",
+        "zz plant": "Zamioculca",
+        "monstera": "Costela-de-Adão",
+        "fern": "Samambaia",
+        "anthurium": "Antúrio",
+        "rubber plant": "Ficus-elástica",
+        "areca palm": "Palmeira-areca"
+    };
+
+
         async function carregarPlantas() {
             try {
                 const resposta = await fetch("/.netlify/functions/plantas");
@@ -47,9 +62,9 @@
                                  loading="lazy">
 
                             <div class="info">
-                                <h2>${planta.common_name || "Planta sem nome"}</h2>
-                                <p>💧 <strong>Rega:</strong> ${planta.watering || "Não informado"}</p>
-                                <p>☀️ <strong>Luz:</strong> ${planta.sunlight?.join(", ") || "Não informado"}</p>
+                                <h2>${nomes[planta.common_name?.toLowerCase()] || planta.common_name || "Planta sem nome"}</h2>
+                                <p>💧 <strong>Rega:</strong> ${planta.watering || "Média"}</p>
+                                <p>☀️ <strong>Luz:</strong> ${planta.sunlight?.join(", ") || "Meia-sombra"}</p>
                             </div>
                         </article>`;
                 });
