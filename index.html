@@ -16,14 +16,17 @@
         .plant img { width: 100%; height: 180px; object-fit: cover; display: block; }
         .info { padding: 15px; }
         .info h2 { margin-top: 0; }
-        @media (max-width: 520px) { header { text-align: left; } .grid { grid-template-columns: 1fr; } }
+        @media (max-width: 520px) {
+            header { text-align: left; }
+            .grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 
 <body>
     <header>
         <h1>CuidaPlanta 🌱</h1>
-        <p>Escolha uma planta e descubra como cuidar dela!</p>
+        <p>Escolha uma planta e descubra mais sobre ela!</p>
     </header>
 
     <main>
@@ -31,20 +34,28 @@
     </main>
 
     <script>
-
-       const nomes = {
-        "flowering-maple": "Ácer-florido",
-        "snake plant": "Espada-de-São-Jorge",
-        "peace lily": "Lírio-da-Paz",
-        "pothos": "Jiboia",
-        "zz plant": "Zamioculca",
-        "monstera": "Costela-de-Adão",
-        "fern": "Samambaia",
-        "anthurium": "Antúrio",
-        "rubber plant": "Ficus-elástica",
-        "areca palm": "Palmeira-areca"
-    };
-
+        const nomes = {
+            "flowering-maple": "Ácer-florido",
+            "maidenhair fern": "Avenca",
+            "delta maidenhair fern": "Avenca",
+            "urn plant": "Bromélia",
+            "stalked aeonium": "Aeônio",
+            "lipstick plant": "Columéia-batom",
+            "philippine evergreen": "Aglaonema",
+            "chinese evegreen": "Aglaonema",
+            "chinese evergreen": "Aglaonema",
+            "elephant's ear": "Orelha-de-elefante",
+            "giant elephant's ear": "Orelha-de-elefante",
+            "joseph's coat": "Periquito",
+            "anthurium": "Antúrio",
+            "zebra plant": "Aphelandra",
+            "trailing snapdragon": "Asarina",
+            "sprenger's asparagus fern": "Aspargo-samambaia",
+            "asparagus fern": "Aspargo-samambaia",
+            "cast-iron plant": "Aspidistra",
+            "bird's nest fern": "Samambaia-ninho-de-passarinho",
+            "japanese painted fern": "Samambaia-pintada"
+        };
 
         async function carregarPlantas() {
             try {
@@ -55,16 +66,16 @@
                 grid.innerHTML = "";
 
                 resultado.data.forEach(planta => {
+                    const nome = planta.common_name?.toLowerCase();
+                    const nomePortugues = nomes[nome] || planta.common_name || "Planta";
+
                     grid.innerHTML += `
                         <article class="plant">
-                            <img src="${planta.default_image?.regular_url}" 
-                                 alt="${planta.common_name || "Planta"}" 
+                            <img src="${planta.default_image?.regular_url || "https://placehold.co/600x400/e8f5e9/1b4332?text=CuidaPlanta"}"
+                                 alt="${nomePortugues}"
                                  loading="lazy">
-
                             <div class="info">
-                                <h2>${nomes[planta.common_name?.toLowerCase()] || planta.common_name || "Planta sem nome"}</h2>
-                                <p>💧 <strong>Rega:</strong> ${planta.watering || "Média"}</p>
-                                <p>☀️ <strong>Luz:</strong> ${planta.sunlight?.join(", ") || "Meia-sombra"}</p>
+                                <h2>${nomePortugues}</h2>
                             </div>
                         </article>`;
                 });
