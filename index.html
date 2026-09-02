@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="CuidaPlanta - informações para cuidar das suas plantas.">
+    <meta name="theme-color" content="#2e7d32">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" href="/icons/icon-192.svg">
+    <link rel="apple-touch-icon" href="/icons/icon-192.svg">
     <title>CuidaPlanta 🌱</title>
 
     <style>
@@ -17,6 +21,36 @@
         .info { padding: 15px; }
         .info h2 { margin-top: 0; font-size: 1.2rem; text-transform: capitalize; }
         .info p { margin: 5px 0; font-size: 0.9rem; }
+
+        /* Seção da câmera */
+        .camera-section {
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px #bbb;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .camera-section h2 { margin-top: 0; }
+        .btn-camera {
+            background: #2e7d32;
+            color: #fff;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        .btn-camera:hover { background: #1b5e20; }
+        #foto-tirada {
+            display: none;
+            max-width: 100%;
+            max-height: 300px;
+            margin-top: 15px;
+            border-radius: 10px;
+        }
+        #input-camera { display: none; }
+
         @media (max-width: 520px) {
             header { text-align: left; }
             .grid { grid-template-columns: 1fr; }
@@ -31,87 +65,86 @@
     </header>
 
     <main>
+        <!-- RECURSO DE HARDWARE: Câmera do dispositivo -->
+        <section class="camera-section">
+            <h2>📸 Fotografe sua planta</h2>
+            <p>Use a câmera do seu celular para tirar uma foto da sua planta!</p>
+            <input type="file" accept="image/*" capture="environment" id="input-camera">
+            <button class="btn-camera" onclick="document.getElementById('input-camera').click()">
+                📷 Abrir Câmera
+            </button>
+            <br>
+            <img id="foto-tirada" alt="Foto da sua planta">
+            <p id="msg-foto" style="display:none; color:#2e7d32; font-weight:bold;">
+                ✅ Foto capturada com sucesso!
+            </p>
+        </section>
+
+        <h2>🌿 Nossas Plantas</h2>
         <div class="grid" id="plants">Carregando plantas...</div>
     </main>
 
     <script>
+        // ========================================
+        // 1. REGISTRAR O SERVICE WORKER (para PWA)
+        // ========================================
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.register("/sw.js");
+        }
+
+        // ========================================
+        // 2. CÂMERA - Recurso de hardware
+        // ========================================
+        document.getElementById("input-camera").addEventListener("change", function(evento) {
+            var arquivo = evento.target.files[0];
+            if (arquivo) {
+                var foto = document.getElementById("foto-tirada");
+                foto.src = URL.createObjectURL(arquivo);
+                foto.style.display = "block";
+                document.getElementById("msg-foto").style.display = "block";
+            }
+        });
+
+        // ========================================
+        // 3. NOMES DAS PLANTAS EM PORTUGUÊS
+        // ========================================
         const nomes = {
-        "jacob's coat": "Periquito",
-        "hot water plant": "Acandilado",
-        "desert rose": "Rosa-do-deserto",
-        "onion": "Cebola",
-        "amazonian elephant's ear": "Alocásia-amazônica",
-        "aloe": "Babosa",
+            "jacob's coat": "Periquito",
+            "hot water plant": "Acandilado",
+            "desert rose": "Rosa-do-deserto",
+            "onion": "Cebola",
+            "amazonian elephant's ear": "Alocásia-amazônica",
+            "aloe": "Babosa",
+            "flowering-maple": "Lanterna-chinesa",
+            "maidenhair fern": "Avenca",
+            "delta maidenhair fern": "Avenca-delta",
+            "urn plant": "Vaso-de-prata",
+            "stalked aeonium": "Aeônio",
+            "lipstick plant": "Columneia-batom",
+            "philippine evergreen": "Aglaonema-café",
+            "chinese evegreen": "Aglaonema",
+            "chinese evergreen": "Aglaonema",
+            "elephant's ear": "Orelha-de-elefante",
+            "giant elephant's ear": "Orelha-de-elefante-gigante",
+            "joseph's coat": "Periquito",
+            "anthurium": "Antúrio",
+            "zebra plant": "Afelandra",
+            "trailing snapdragon": "Asarina",
+            "sprenger's asparagus fern": "Aspargo-samambaia",
+            "asparagus fern": "Aspargo-pluma",
+            "cast-iron plant": "Aspidistra",
+            "bird's nest fern": "Asplênio",
+            "japanese painted fern": "Samambaia-pintada-japonesa"
+        };
 
-        "flowering-maple": "Lanterna-chinesa",
-        "maidenhair fern": "Avenca",
-        "delta maidenhair fern": "Avenca-delta",
-        "urn plant": "Vaso-de-prata",
-        "stalked aeonium": "Aeônio",
-        "lipstick plant": "Columneia-batom",
-        "philippine evergreen": "Aglaonema-café",
-        "chinese evegreen": "Aglaonema",
-        "chinese evergreen": "Aglaonema",
-        "elephant's ear": "Orelha-de-elefante",
-        "giant elephant's ear": "Orelha-de-elefante-gigante",
-        "joseph's coat": "Periquito",
-        "anthurium": "Antúrio",
-        "zebra plant": "Afelandra",
-        "trailing snapdragon": "Asarina",
-        "sprenger's asparagus fern": "Aspargo-samambaia",
-        "asparagus fern": "Aspargo-pluma",
-        "cast-iron plant": "Aspidistra",
-        "bird's nest fern": "Asplênio",
-        "japanese painted fern": "Samambaia-pintada-japonesa"
-    };
-
-        // Tradução simples de rega
-        function traduzirRega(watering) {
-            if (!watering) return "Não informado";
-            switch (watering.toLowerCase()) {
-                case "frequent": return "Frequente";
-                case "average": return "Moderada";
-                case "minimum": return "Pouca";
-                case "none": return "Nenhuma";
-                default: return watering;
-            }
-        }
-
-        // Tradução simples de luz solar
-        function traduzirLuz(sunlight) {
-            if (!sunlight || sunlight.length === 0) return "Não informado";
-            const traducoes = {
-                "full sun": "Sol pleno",
-                "part shade": "Meia-sombra",
-                "full shade": "Sombra total",
-                "filtered light": "Luz filtrada",
-                "part sun/part shade": "Sol parcial",
-                "sheltered": "Abrigada"
-            };
-            return sunlight.map(s => traducoes[s.toLowerCase()] || s).join(", ");
-        }
-
-        // Tradução simples de ciclo de vida
-        function traduzirCiclo(cycle) {
-            if (!cycle) return "Não informado";
-            switch (cycle.toLowerCase()) {
-                case "perennial": return "Perene";
-                case "annual": return "Anual";
-                case "biennial": return "Bienal";
-                case "biannual": return "Bianual";
-                default: return cycle;
-            }
-        }
-
+        // ========================================
+        // 4. CARREGAR PLANTAS DA API
+        // ========================================
         async function carregarPlantas() {
             try {
                 const resposta = await fetch("/.netlify/functions/plantas");
                 const resultado = await resposta.json();
                 const grid = document.querySelector("#plants");
-
-                // DEBUG: aperte F12 no navegador e veja o Console
-                console.log("Resposta da API:", resultado);
-                console.log("Primeira planta:", resultado.data?.[0]);
 
                 grid.innerHTML = "";
 
@@ -126,9 +159,6 @@
                                  loading="lazy">
                             <div class="info">
                                 <h2>${nomePortugues}</h2>
-                                <p>💧 Rega: ${traduzirRega(planta.watering)}</p>
-                                <p>☀️ Luz: ${traduzirLuz(planta.sunlight)}</p>
-                                <p>🔄 Ciclo: ${traduzirCiclo(planta.cycle)}</p>
                             </div>
                         </article>`;
                 });
