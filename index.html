@@ -109,6 +109,10 @@
                 const resultado = await resposta.json();
                 const grid = document.querySelector("#plants");
 
+                // DEBUG: aperte F12 no navegador e veja o Console
+                console.log("Resposta da API:", resultado);
+                console.log("Primeira planta:", resultado.data?.[0]);
+
                 grid.innerHTML = "";
 
                 resultado.data.forEach(planta => {
